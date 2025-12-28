@@ -1,0 +1,10 @@
+{
+    "kolesterol": {
+        "baslik": "Kolesterol (LDL) Sınırı",
+        "ldl_sinir": 160
+    },
+    "beslenme": {
+        "baslik": "Mama (VKI) Sınırı",
+        "vki_sinir": 18.5
+    }
+}
