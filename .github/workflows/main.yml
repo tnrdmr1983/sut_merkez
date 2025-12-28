@@ -1,26 +1,31 @@
 name: SUT-Bot
 on:
   workflow_dispatch:
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Bu satır yetkiyi koda zorla tanımlar
+      contents: write # Dosya yazma yetkisini zorla açar
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Kodları Çek
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true # Yetkiyi işlem boyunca saklar
+
+      - name: Python Kur
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Yukle
+
+      - name: Kütüphaneleri Yükle
         run: pip install requests beautifulsoup4 pandas openpyxl
-      - name: Calistir
+
+      - name: Botu Çalıştır
         run: python bot.py
-      - name: Kaydet
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add taslak_kurallar.json
-          git commit -m "Otomatik SUT Guncelleme" || exit 0
-          git push
+
+      - name: Değişiklikleri Kaydet ve Pushla
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "SGK SUT Verisi Guncellendi"
+          file_pattern: 'taslak_kurallar.json' # Sadece bu dosyayı yükle
