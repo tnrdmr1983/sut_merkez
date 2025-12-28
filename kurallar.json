@@ -1,0 +1,13 @@
+{
+  "kolesterol": {
+    "baslik": "Kolesterol Grubu",
+    "ldl_sinir": 190,
+    "mesaj": "Risksiz hastada LDL 190 altı kesinti sebebidir.",
+    "iki_tahlil": true
+  },
+  "beslenme": {
+    "baslik": "Oral Beslenme",
+    "vki_sinir": 18.5,
+    "mesaj": "VKI 18.5 üzerinde ise %10 kilo kaybı şarttır."
+  }
+}
