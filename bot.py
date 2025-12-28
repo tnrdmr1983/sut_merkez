@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 import pandas as pd # Excel okumak için
 import json
 import re # Metin içinden sayıları ayıklamak için
+import os
 
 def veriyi_ayikla(metin):
-    # Metin içinde LDL ve yanındaki sayıyı arar
+    # Metin içinde LDL ve yanındaki sayıları arar
     ldl_match = re.search(r'LDL\s*[>=]*\s*(\d+)', metin)
     vki_match = re.search(r'VKI\s*[<=]*\s*(\d+\.?\d*)', metin)
     
@@ -37,8 +38,10 @@ def sgk_bot_calistir():
                 "beslenme": {"baslik": "Mama", "vki_sinir": 18.5}
             }
             
-            # Excel sütun ismini kontrol et (SGK bazen AÇIKLAMALAR bazen NOTLAR yazabilir)
-            sutun_adi = 'AÇIKLAMALAR' if 'AÇIKLAMALAR' in df.columns else df.columns[-1]
+            # Sütun ismini akıllıca bul (AÇIKLAMALAR veya NOTLAR olabilir)
+            possible_cols = ['AÇIKLAMALAR', 'NOTLAR', 'SUT AÇIKLAMALARI', 'AÇIKLAMA']
+            sutun_adi = next((c for c in possible_cols if c in df.columns), df.columns[-1])
+            print(f"Tarama yapılan sütun: {sutun_adi}")
             
             for index, row in df.iterrows():
                 aciklama = str(row[sutun_adi])
@@ -46,15 +49,18 @@ def sgk_bot_calistir():
                 if 'ldl_sinir' in bulunan: kurallar['kolesterol']['ldl_sinir'] = bulunan['ldl_sinir']
                 if 'vki_sinir' in bulunan: kurallar['beslenme']['vki_sinir'] = bulunan['vki_sinir']
 
-            # --- DEĞİŞİKLİK BURADA: CANLIYI BOZMA, TASLAK OLUŞTUR ---
-            # 4. Adım: Taslak dosyayı kaydet (Admin onayı için)
-            with open('taslak_kurallar.json', 'w', encoding='utf-8') as f:
+            # 4. Adım: Taslak dosyayı kaydet
+            # Dosya adının tam olarak bu olduğundan emin oluyoruz
+            output_file = 'taslak_kurallar.json'
+            with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(kurallar, f, ensure_ascii=False, indent=2)
-            print("İşlem tamam: taslak_kurallar.json oluşturuldu. Onay bekleniyor.")
+            
+            print(f"İşlem tamam: {output_file} başarıyla oluşturuldu.")
+        else:
+            print("SGK sitesinde güncel duyuru linki bulunamadı.")
 
     except Exception as e:
         print(f"Hata oluştu: {e}")
 
 if __name__ == "__main__":
     sgk_bot_calistir()
- 
