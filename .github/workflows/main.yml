@@ -2,8 +2,8 @@ name: SGK SUT Guncelleyici
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Her gece 00:00'da otomatik çalışır
-  workflow_dispatch: # Manuel çalıştırma butonunu açar
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,5 +29,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add taslak_kurallar.json
-          git commit -m "SGK Taslak Guncellendi" || echo "Değişiklik yok"
+          git commit -m "SGK Taslak Guncellendi" || echo "Degisiklik yok"
           git push
