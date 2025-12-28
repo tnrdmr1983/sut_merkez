@@ -1,27 +1,33 @@
 name: SGK SUT Guncelleyici
+
 on:
   schedule:
-    - cron: '0 0 * * *' # Her gece 00:00'da çalışır
-  workflow_dispatch: # İstediğinde elle çalıştırmak için
+    - cron: '0 0 * * *' # Her gece 00:00'da otomatik çalışır
+  workflow_dispatch: # Bu satır "Run workflow" butonunu aktif eder
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Kodları çek
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        
       - name: Python kur
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Botu çalıştır
+          
+      - name: Kütüphaneleri yükle
         run: |
-          pip install requests beautifulsoup4
-          python bot.py
+          pip install requests beautifulsoup4 pandas openpyxl
+          
+      - name: Botu çalıştır
+        run: python bot.py
+        
       - name: Değişiklikleri kaydet
         run: |
           git config --global user.name 'SUT Botu'
           git config --global user.email 'bot@sut.com'
-          git add kurallar.json
-          git commit -m "SGK Otomatik Güncelleme" || exit 0
+          git add .
+          git commit -m "SGK Otomatik Taslak Güncelleme" || echo "Değişiklik yok"
           git push
